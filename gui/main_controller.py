@@ -27,6 +27,7 @@ from gui.gui import GUI
 from gui.click_controller import ClickController
 from gui.reader import PropagationReader, get_data_loader
 from gui.exporter import convert_frames_to_video, convert_mask_to_binary
+from scripts.download_models import download_models_if_needed
 
 log = logging.getLogger()
 
@@ -123,6 +124,7 @@ class MainController():
         self.update_config()
 
     def initialize_networks(self) -> None:
+        download_models_if_needed()
         self.cutie = CUTIE(self.cfg).eval().to(self.device)
         model_weights = torch.load(self.cfg.weights)
         self.cutie.load_weights(model_weights)
