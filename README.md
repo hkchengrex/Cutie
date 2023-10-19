@@ -18,7 +18,7 @@ The GUI tool additionally contains the "permanent memory" (from [XMem++](https:/
 
 ## Demo Video
 
-https://github.com/hkchengrex/Cutie/assets/7107196/e6dbfdac-c1ae-4e0b-9eb2-42a7e90e7045
+https://github.com/hkchengrex/Cutie/assets/7107196/83a8abd5-369e-41a9-bb91-d9cc1289af70
 
 ## Installation
 
