@@ -1,4 +1,4 @@
-# Cutie: Putting the Object Back into Video Object Segmentation
+# Putting the Object Back into Video Object Segmentation (Cutie)
 
 ![titlecard](https://imgur.com/6K7BgZ7.png)
 
