@@ -2,7 +2,7 @@
 
 We provide:
 
-1. Pretrained Cutie model: preparing
+1. Pretrained Cutie model: <https://github.com/hkchengrex/Cutie/releases/tag/v1.0>
 2. Pre-computed outputs: preparing
 
 ## Preparation
