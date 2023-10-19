@@ -3,6 +3,7 @@
 ![titlecard](https://imgur.com/6K7BgZ7.png)
 
 [Ho Kei Cheng](https://hkchengrex.github.io/), [Seoung Wug Oh](https://sites.google.com/view/seoungwugoh/), [Brian Price](https://www.brianpricephd.com/), [Joon-Young Lee](https://joonyoung-cv.github.io/), [Alexander Schwing](https://www.alexander-schwing.de/)
+
 University of Illinois Urbana-Champaign and Adobe
 
 <!-- [[arXiV]]() [[PDF]]() [[Project Page]](https://hkchengrex.github.io/Cutie/) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]() -->
@@ -16,6 +17,8 @@ The GUI tool additionally contains the "permanent memory" (from [XMem++](https:/
 ![overview](https://imgur.com/pejwnwU.png)
 
 ## Demo Video
+
+https://github.com/hkchengrex/Cutie/assets/7107196/e6dbfdac-c1ae-4e0b-9eb2-42a7e90e7045
 
 ## Installation
 
