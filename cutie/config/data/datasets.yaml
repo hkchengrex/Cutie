@@ -1,0 +1,64 @@
+image_datasets:
+  base: ../static
+  FSS:
+    directory: fss
+    data_structure: 0
+    multiplier: 1
+  DUTS_TR:
+    directory: DUTS-TR
+    data_structure: 1
+    multiplier: 1
+  DUTS_TE:
+    directory: DUTS-TE
+    data_structure: 1
+    multiplier: 1
+  ECSSD:
+    directory: ecssd
+    data_structure: 1
+    multiplier: 1
+  BIG:
+    directory: BIG_small
+    data_structure: 1
+    multiplier: 5
+  HRSOD:
+    directory: HRSOD_small
+    data_structure: 1
+    multiplier: 5
+
+vos_datasets:
+  base: ../
+  DAVIS:
+    image_directory: DAVIS/2017/trainval/JPEGImages/480p
+    mask_directory: DAVIS/2017/trainval/Annotations/480p
+    multiplier: 2
+    frame_interval: 2
+    subset: ./cutie/utils/subsets/davis_train.txt
+    empty_masks: ./cutie/utils/subsets/davis_empty_masks.txt
+  YouTubeVOS:
+    image_directory: YouTube/train/JPEGImages
+    mask_directory: YouTube/train/Annotations
+    multiplier: 1
+    frame_interval: 5
+    subset: ./cutie/utils/subsets/yv_train.txt
+    empty_masks: ./cutie/utils/subsets/yv_empty_masks.txt
+  MOSE:
+    image_directory: MOSE/train/JPEGImages
+    mask_directory: MOSE/train/Annotations
+    multiplier: 1
+    frame_interval: 5
+    subset: null
+    empty_masks: ./cutie/utils/subsets/mose_empty_masks.txt
+  BURST:
+    image_directory: BURST/train-vos/JPEGImages
+    mask_directory: BURST/train-vos/Annotations
+    multiplier: 1
+    frame_interval: 5
+    subset: null
+    empty_masks: ./cutie/utils/subsets/burst_empty_masks.txt
+  OVIS:
+    image_directory: OVIS-VOS-train/JPEGImages
+    mask_directory: OVIS-VOS-train/Annotations
+    multiplier: 1
+    frame_interval: 3
+    subset: null
+    empty_masks: ./cutie/utils/subsets/ovis_empty_masks.txt

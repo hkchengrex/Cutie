@@ -1,0 +1,55 @@
+defaults:
+  - _self_
+  - model: base
+
+# workspace configuration
+workspace_root: ./workspace
+image_endpoint: images
+mask_endpoint: masks
+vis_endpoint: vis
+
+amp: True
+weights: weights/cutie-base-mega.pth
+ritm_weights: weights/coco_lvis_h18_itermask.pth
+
+# All "size" parameters represent the length of the shorter edge
+# maximum internal processing size; reducing this speeds up processing
+max_internal_size: 480
+
+# maximum size for extracting frames; the output will also be in this size
+# reducing this mainly speed up I/O
+# it should not be smaller than the internal size
+max_overall_size: 1080
+buffer_size: 20
+
+# we use multithreading for saving the results
+save_queue_size: 20
+num_save_threads: 4
+
+# for reading
+num_read_workers: 4
+
+# for exporting video
+output_fps: 24
+output_bitrate: 1 # in Mbps
+
+use_long_term: True
+mem_every: 5
+top_k: 30
+stagger_updates: 5
+chunk_size: -1 # number of objects to process in parallel; -1 means unlimited
+
+# only relevant when long_term is not enabled
+max_mem_frames: 5
+
+# only relevant when long_term is enabled
+long_term:
+  count_usage: True
+  max_mem_frames: 10
+  min_mem_frames: 5
+  num_prototypes: 128
+  max_num_tokens: 10000
+  buffer_tokens: 2000
+
+save_aux: False
+flip_aug: False

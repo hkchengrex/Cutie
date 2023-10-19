@@ -1,0 +1,21 @@
+defaults:
+  - datasets
+
+pre_training:
+  datasets:
+    - FSS
+    - DUTS_TR
+    - DUTS_TE
+    - ECSSD
+    - BIG
+    - HRSOD
+
+main_training:
+  datasets:
+    - DAVIS
+    - YouTubeVOS
+    - MOSE
+    - BURST
+    - OVIS
+  num_iterations: 175000
+  lr_schedule_steps: [140000, 160000]

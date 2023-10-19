@@ -1,0 +1,6 @@
+defaults: 
+  - base
+
+pixel_encoder:
+  type: resnet18
+  ms_dims: [256, 128, 64]
