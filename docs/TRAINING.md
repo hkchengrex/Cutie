@@ -14,6 +14,16 @@ We put datasets out-of-source, as in XMem. You do not need BL30K. The directory 
 │       └── trainval
 │           ├── Annotations
 │           └── ...
+├── BURST
+│   ├── frames
+│   ├── val
+│   │   ├── all_classes.json
+│   │   └── first_frame_annotations.json
+│   ├── train
+│   │   └── train.json
+│   └── train-vos
+│       ├── JEPGImages
+│       └── Annotations
 ├── static
 │   ├── BIG_small
 │   └── ...
@@ -22,16 +32,31 @@ We put datasets out-of-source, as in XMem. You do not need BL30K. The directory 
 │   │   └── valid_all_frames
 │   ├── train
 │   └── valid
+├── OVIS-VOS-train
+│   ├── JPEGImages
+│   └── Annotations
 └── MOSE
     ├── JPEGImages
     └── Annotations
 ```
 
-DEVA has a script for downloading some of these datasets: <https://github.com/hkchengrex/Tracking-Anything-with-DEVA/blob/main/docs/TRAINING.md>
+DEVA has a script for downloading some of these datasets: <https://github.com/hkchengrex/Tracking-Anything-with-DEVA/blob/main/docs/TRAINING.md>.
+
+To generate `train-vos` for BURST, use the script `scripts/convert_burst_to_vos_train.py` which extracts masks from the JSON file into the DAVIS/YouTubeVOS format for training.
+
+To generate OVIS-VOS-train, use something like https://github.com/youtubevos/vis2vos or download our preprocessed version from https://drive.google.com/uc?id=1AZPyyqVqOl6j8THgZ1UdNJY9R1VGEFrX.
+
+Links to the datasets:
+- DAVIS: https://davischallenge.org/
+- YouTubeVOS: https://youtube-vos.org/
+- BURST: https://github.com/Ali2500/BURST-benchmark
+- MOSE: https://henghuiding.github.io/MOSE/
+- LVOS: https://lingyihongfd.github.io/lvos.github.io/
+- OVIS: https://songbai.site/ovis/
 
 ## Training Command
 
-We trained with four A100 GPUs which took around 30 hours.
+We trained with four A100 GPUs, which took around 30 hours.
 
 ```
 OMP_NUM_THREADS=4 torchrun --master_port 25357 --nproc_per_node=4 train.py exp_id=[some unique id] model=[small/base] data=[base/with-mose/mega]
