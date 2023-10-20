@@ -20,6 +20,8 @@ The GUI tool additionally contains the "permanent memory" (from [XMem++](https:/
 
 https://github.com/hkchengrex/Cutie/assets/7107196/83a8abd5-369e-41a9-bb91-d9cc1289af70
 
+Source: https://raw.githubusercontent.com/hkchengrex/Cutie/main/docs/sources.txt
+
 ## Installation
 
 Tested on Ubuntu only.
