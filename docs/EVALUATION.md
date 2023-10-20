@@ -7,7 +7,7 @@ We provide:
 
 ## Preparation
 
-1. Datasets should be placed out-of-source. See XMem for the directory structure: <https://github.com/hkchengrex/XMem/blob/main/docs/GETTING_STARTED.md>.
+1. Datasets should be placed out-of-source. [See TRAINING.md for the directory structure](https://github.com/hkchengrex/Cutie/blob/main/docs/TRAINING.md).
 
 2. For the LVOS validation set, pre-process it by keeping only the first annotations:
 
