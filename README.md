@@ -85,7 +85,7 @@ If you are running this on a remote server, X11 forwarding is possible. Start by
 
 - The GUI tools uses [RITM](https://github.com/SamsungLabs/ritm_interactive_segmentation) for interactive image segmentation. This repository also contains a redistribution of their code in `gui/ritm`. That part of code follows RITM's license.
 
-- For automatic video segmentation/integration with externel detectors, see [DEVA](https://github.com/hkchengrex/Tracking-Anything-with-DEVA).
+- For automatic video segmentation/integration with external detectors, see [DEVA](https://github.com/hkchengrex/Tracking-Anything-with-DEVA).
 
 - The interactive demo is developed upon [IVS](https://github.com/seoungwugoh/ivs-demo), [MiVOS](https://github.com/hkchengrex/MiVOS), and [XMem](https://github.com/hkchengrex/XMem).
 
