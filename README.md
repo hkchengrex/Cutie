@@ -10,7 +10,7 @@ University of Illinois Urbana-Champaign and Adobe
 
 ## Highlight
 
-Cutie is a video object segmentation framework, a follow-up work of [XMem](https://github.com/hkchengrex/XMem) with better consistency, robustness, and speed.
+Cutie is a video object segmentation framework -- a follow-up work of [XMem](https://github.com/hkchengrex/XMem) with better consistency, robustness, and speed.
 This repository contains code for standard video object segmentation and a GUI tool for interactive video segmentation.
 The GUI tool additionally contains the "permanent memory" (from [XMem++](https://github.com/max810/XMem2)) option for better controllability.
 
