@@ -2,8 +2,8 @@
 
 We provide:
 
-1. Pretrained Cutie model: <https://github.com/hkchengrex/Cutie/releases/tag/v1.0>
-2. Pre-computed outputs: preparing
+1. Pretrained Cutie model: <https://github.com/hkchengrex/Cutie/releases/tag/v1.0> or <https://drive.google.com/drive/folders/1E9ESHFlGU2KQkeRfH14kZzbdnwA0dH0f?usp=share_link>
+2. Pre-computed outputs: <https://drive.google.com/drive/folders/1x-jf5GHB4hypU9cDZ0VSkMKGm8MR0eQJ?usp=share_link>
 
 ## Preparation
 
