@@ -25,7 +25,7 @@ class KeyValueMemoryStore:
         Each bucket is associated with a single key tensor
             and a dictionary of value tensors indexed by object id.
 
-        The keys and values are stored as the concatenation of a permaent part and a temporary part.
+        The keys and values are stored as the concatenation of a permanent part and a temporary part.
         """
         self.save_selection = save_selection
         self.save_usage = save_usage
