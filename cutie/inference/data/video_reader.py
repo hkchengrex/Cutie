@@ -115,7 +115,7 @@ class VideoReader(Dataset):
             size_im = Image.open(size_path).convert('RGB')
             output_shape = np.array(size_im).shape[:2]
 
-        # resize if the input image is to large
+        # resize if the input image is too large
         if self.image_dir != self.size_dir:
             # might be different from shape if size_dir is used
             input_shape = np.array(img).shape[:2]
