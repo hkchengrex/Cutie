@@ -1,4 +1,4 @@
-# Modifed from https://github.com/seoungwugoh/ivs-demo
+# Modified from https://github.com/seoungwugoh/ivs-demo
 
 from typing import Literal, List
 import numpy as np

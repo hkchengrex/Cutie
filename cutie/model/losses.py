@@ -52,7 +52,7 @@ class LossComputer:
             # get gt labels
             point_labels = point_sample(soft_gt, point_coords, align_corners=False)
         point_logits = point_sample(logits, point_coords, align_corners=False)
-        # point_labals and point_logits: B*C*P
+        # point_labels and point_logits: B*C*P
 
         loss_ce = ce_loss(point_logits, point_labels)
         loss_dice = dice_loss(point_logits.softmax(dim=1), point_labels)
