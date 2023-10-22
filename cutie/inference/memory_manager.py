@@ -25,7 +25,7 @@ class MemoryManager:
 
         self.use_long_term = cfg.use_long_term
         self.count_long_term_usage = cfg.long_term.count_usage
-        # subtract 1 because the first-frame is now counted as "permantent memory"
+        # subtract 1 because the first-frame is now counted as "permanent memory"
         # and is not counted towards max_mem_frames
         # but we want to keep the hyperparameters consistent as before for the same behavior
         if self.use_long_term:
