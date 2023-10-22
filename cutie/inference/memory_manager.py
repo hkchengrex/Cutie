@@ -25,7 +25,7 @@ class MemoryManager:
 
         self.use_long_term = cfg.use_long_term
         self.count_long_term_usage = cfg.long_term.count_usage
-        # subtract 1 because the first-frame is now counted as "permantent memory"
+        # subtract 1 because the first-frame is now counted as "permanent memory"
         # and is not counted towards max_mem_frames
         # but we want to keep the hyperparameters consistent as before for the same behavior
         if self.use_long_term:
@@ -247,7 +247,7 @@ class MemoryManager:
         # insert object values into object memory
         for obj_id, obj in enumerate(objects):
             if obj in self.obj_v:
-                """steaming average
+                """streaming average
                 each self.obj_v[obj] is (1/2)*num_summaries*(embed_dim+1)
                 first embed_dim keeps track of the sum of embeddings
                 the last dim keeps the total count
