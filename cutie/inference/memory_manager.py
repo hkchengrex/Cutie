@@ -247,7 +247,7 @@ class MemoryManager:
         # insert object values into object memory
         for obj_id, obj in enumerate(objects):
             if obj in self.obj_v:
-                """steaming average
+                """streaming average
                 each self.obj_v[obj] is (1/2)*num_summaries*(embed_dim+1)
                 first embed_dim keeps track of the sum of embeddings
                 the last dim keeps the total count
