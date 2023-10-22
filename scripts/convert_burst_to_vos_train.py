@@ -4,7 +4,7 @@ from os import path
 
 from PIL import Image
 import numpy as np
-from progressbar import progressbar
+from tqdm import tqdm
 from multiprocessing import Pool
 
 from argparse import ArgumentParser
@@ -20,13 +20,12 @@ import pycocotools.mask as mask_utils
 
 parser = ArgumentParser()
 parser.add_argument('--json_path')
-parser.add_argument('--input_path')
-parser.add_argument('--visualize_path')
+parser.add_argument('--frames_path')
+parser.add_argument('--output_path')
 args = parser.parse_args()
 
-input_path = args.input_path
+frames_path = args.frames_path
 output_path = args.output_path
-visualize_path = args.visualize_path
 
 with open(args.json_path, 'r') as f:
     global_json = json.load(f)
@@ -35,20 +34,19 @@ with open(args.json_path, 'r') as f:
 def process_video(sequence):
     dataset = sequence['dataset']
     seq_name = sequence['seq_name']
-    all_image_paths = sequence['all_image_paths']
     annotated_image_paths = sequence['annotated_image_paths']
     segmentations = sequence['segmentations']
     width, height = sequence['width'], sequence['height']
 
-    selected_image_paths = sorted(annotated_image_paths)
-
     new_seq_name = dataset+'_-_'+seq_name
 
     # Decode masks from annotated images and save them to the visualize folder
-    visualize_folder = path.join(visualize_path, new_seq_name)
-    os.makedirs(visualize_folder, exist_ok=True)
+    output_image_folder = path.join(output_path, 'JPEGImages', new_seq_name)
+    output_mask_folder = path.join(output_path, 'Annotations', new_seq_name)
+    os.makedirs(output_image_folder, exist_ok=True)
+    os.makedirs(output_mask_folder, exist_ok=True)
     for segmentation, image_path in zip(segmentations, annotated_image_paths):
-        output_image_path = path.join(visualize_folder, image_path)[:-4] + '.png'
+        output_mask_path = path.join(output_mask_folder, image_path)[:-4] + '.png'
 
         output_mask = np.zeros((height, width), dtype=np.uint8)
         for object_id, object_mask in segmentation.items():
@@ -60,14 +58,16 @@ def process_video(sequence):
 
         output_mask = Image.fromarray(output_mask)
         output_mask.putpalette(davis_palette)
-        output_mask.save(output_image_path)
+        output_mask.save(output_mask_path)
 
-        copy2(path.join(input_path, dataset, seq_name, image_path), output_folder)
+        copy2(path.join(frames_path, dataset, seq_name, image_path), output_image_folder)
 
 
 sequences = global_json['sequences']
+# for seq in sequences:
+#     process_video(seq)
 with Pool(16) as p:
-    for _ in progressbar(p.imap_unordered(process_video, sequences), max_value=len(sequences)):
+    for _ in tqdm(p.imap_unordered(process_video, sequences), total=len(sequences)):
         pass
 
 print('Done')
