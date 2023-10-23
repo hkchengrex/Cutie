@@ -1,6 +1,6 @@
+import sys
 from typing import Literal
 
-import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision.transforms import ToTensor
 
@@ -46,9 +46,17 @@ class PropagationReader(Dataset):
 
 
 def get_data_loader(dataset: Dataset, num_workers: int):
-    loader = DataLoader(dataset,
-                        batch_size=None,
-                        shuffle=False,
-                        num_workers=num_workers,
-                        collate_fn=lambda x: x)
+    if 'linux' in sys.platform:
+        loader = DataLoader(dataset,
+                            batch_size=None,
+                            shuffle=False,
+                            num_workers=num_workers,
+                            collate_fn=lambda x: x)
+    else:
+        print(f'Non-linux platform {sys.platform} detected, using single-threaded dataloader')
+        loader = DataLoader(dataset,
+                            batch_size=None,
+                            shuffle=False,
+                            num_workers=0,
+                            collate_fn=lambda x: x)
     return loader
