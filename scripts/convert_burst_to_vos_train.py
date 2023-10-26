@@ -22,6 +22,7 @@ parser = ArgumentParser()
 parser.add_argument('--json_path')
 parser.add_argument('--frames_path')
 parser.add_argument('--output_path')
+parser.add_argument('--save_all_image', action='store_true')
 args = parser.parse_args()
 
 frames_path = args.frames_path
@@ -61,6 +62,13 @@ def process_video(sequence):
         output_mask.save(output_mask_path)
 
         copy2(path.join(frames_path, dataset, seq_name, image_path), output_image_folder)
+
+    if args.save_all_image:
+        output_all_image_folder = path.join(output_path, 'JPEGImages_all_frames', new_seq_name)
+        os.makedirs(output_all_image_folder, exist_ok=True)
+        all_image_paths = sequence['all_image_paths']
+        for image_path in all_image_paths:
+            copy2(path.join(frames_path, dataset, seq_name, image_path), output_all_image_folder)
 
 
 sequences = global_json['sequences']
