@@ -53,7 +53,7 @@ class BURSTVideoReader(Dataset):
                 transforms.Resize(size, interpolation=InterpolationMode.NEAREST, antialias=True),
             ])
         self.size = size
-        self.use_long_id = True
+        self.use_long_id = False
 
     def __getitem__(self, idx):
         frame = self.frames[idx]
@@ -77,6 +77,8 @@ class BURSTVideoReader(Dataset):
                 for id, segment in segmentations.items():
                     object_mask = mask_utils.decode({'size': shape, 'counts': segment['rle']})
                     mask[object_mask == 1] = int(id)
+
+                    assert int(id) <= 255, 'Too many objects in the frame -- long id needed'
 
                 mask = Image.fromarray(mask)
                 mask = self.mask_transform(mask)

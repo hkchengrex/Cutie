@@ -176,7 +176,7 @@ def save_result(queue: Queue):
                 out_mask = mask.numpy().astype(np.uint32)
                 rgb_mask = np.zeros((*out_mask.shape[-2:], 3), dtype=np.uint8)
                 for id in all_obj_ids:
-                    image = saver.id2rgb_converter._id_to_rgb(id)
+                    _, image = saver.id2rgb_converter.convert(id)
                     obj_mask = (out_mask == id)
                     rgb_mask[obj_mask] = image
                 out_img = Image.fromarray(rgb_mask)
