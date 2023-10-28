@@ -10,7 +10,7 @@ from cutie.utils.tensor_utils import cls_to_one_hot
 
 @torch.jit.script
 def ce_loss(logits: torch.Tensor, soft_gt: torch.Tensor) -> torch.Tensor:
-    # logits: T*C*H*W
+    # logits: T*C*num_points
     loss = F.cross_entropy(logits, soft_gt, reduction='none')
     # sum over temporal dimension
     return loss.sum(0).mean()
@@ -18,8 +18,8 @@ def ce_loss(logits: torch.Tensor, soft_gt: torch.Tensor) -> torch.Tensor:
 
 @torch.jit.script
 def dice_loss(mask: torch.Tensor, soft_gt: torch.Tensor) -> torch.Tensor:
-    # mask: T*C*H*W
-    # soft_gt: T*C*H*W
+    # mask: T*C*num_points
+    # soft_gt: T*C*num_points
     # ignores the background
     mask = mask[:, 1:].flatten(start_dim=2)
     gt = soft_gt[:, 1:].float().flatten(start_dim=2)
@@ -52,7 +52,7 @@ class LossComputer:
             # get gt labels
             point_labels = point_sample(soft_gt, point_coords, align_corners=False)
         point_logits = point_sample(logits, point_coords, align_corners=False)
-        # point_labels and point_logits: B*C*P
+        # point_labels and point_logits: B*C*num_points
 
         loss_ce = ce_loss(point_logits, point_labels)
         loss_dice = dice_loss(point_logits.softmax(dim=1), point_labels)
