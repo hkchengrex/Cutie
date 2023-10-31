@@ -1,0 +1,43 @@
+defaults:
+  - _self_
+  - model: base
+
+# input values overridden by process_video.py __main__ args
+video: null # path to input video file to process; Required
+mask_dir: null  # path to input directory with masks to be used to define segmentation; Required
+output_dir: null # path to output directory where processed masks will be saved; Required
+device: cuda # device used for processing [cuda, mps, cpu]
+num_objects: -1 # number of objects to be used for segmentation. If <1 then number of objects found in first mask is used
+
+# Cutie model weights
+weights: weights/cutie-base-mega.pth
+
+mem_every: 10 # how often to update working memory; higher number speeds up processing
+
+# "size" parameters represent the length of the shorter edge
+# Will downsize the input and restore the output to the original size if needed
+# maximum internal processing size; reducing this speeds up processing; -1 means no resizing
+max_internal_size: 480
+
+use_long_term: True # Using long-term memory as XMem; for videos longer than 1 minut
+
+# only relevant when long_term is not enabled
+max_mem_frames: 5
+
+# only relevant when long_term is enabled
+long_term:
+  count_usage: True
+  max_mem_frames: 10
+  min_mem_frames: 5
+  num_prototypes: 128
+  max_num_tokens: 10000
+  buffer_tokens: 2000
+
+amp: True
+flip_aug: False
+top_k: 30
+stagger_updates: 5
+chunk_size: -1 # number of objects to process in parallel; -1 means unlimited
+save_scores: False
+save_aux: False
+visualize: False
