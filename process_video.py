@@ -115,7 +115,7 @@ def process_video(cfg: DictConfig):
 
                 pbar.update(1)
 
-    # Start inference on video   
+    # Next start inference on video   
     cap.set(cv2.CAP_PROP_POS_FRAMES, 0) # reset frame reading
     total_process_time = 0 
     current_frame_index = 0
@@ -218,6 +218,8 @@ def get_arguments():
     parser.add_argument('-m','--mask_dir', help='Directory with mask files. Must be named with with corresponding video frame number syntax [07d].', default=None)
     parser.add_argument('-o','--output_dir', help='Directory where processed mask files will be saved.', default=None)
     parser.add_argument('-d','--device', help='Target device for processing [cuda, cpu].', default='cuda')
+    parser.add_argument('--mem_every', help='How often to update working memory; higher number speeds up processing.', type=int, default='10')
+    parser.add_argument('--max_internal_size', help='maximum internal processing size; reducing this speeds up processing; -1 means no resizing.', type=int, default='480')
 
     args = parser.parse_args()
     return args
