@@ -126,6 +126,7 @@ def process_video(cfg: DictConfig):
                         object_manager=processor.object_manager,
                         use_long_id=use_long_id,
                         palette=palette)
+    mem_cleanup_ratio = cfg['mem_cleanup_ratio']
 
     with torch.inference_mode():
         with torch.amp.autocast(device, enabled=use_amp):
@@ -182,7 +183,7 @@ def process_video(cfg: DictConfig):
                                 last_frame=(current_frame_index == total_frame_count - 1),
                                 path_to_image=None)
                 
-                check_to_clear_non_permanent_cuda_memory(processor=processor, device=device)
+                check_to_clear_non_permanent_cuda_memory(processor=processor, device=device, mem_cleanup_ratio=mem_cleanup_ratio)
 
                 current_frame_index += 1    
                 pbar.update(1)
@@ -198,18 +199,21 @@ def process_video(cfg: DictConfig):
     print(f'Max allocated memory (MB): {torch.cuda.max_memory_allocated() / (2**20)}') if device == 'cuda' else None
     print('------------------------------------------------------------------------------------------------------------------------------------------------')
 
-def check_to_clear_non_permanent_cuda_memory(processor: InferenceCore, device):
+def check_to_clear_non_permanent_cuda_memory(processor: InferenceCore, device, mem_cleanup_ratio):
     if 'cuda' in device:
-        info = torch.cuda.mem_get_info()
+        if mem_cleanup_ratio > 0 and mem_cleanup_ratio <= 1:
+            info = torch.cuda.mem_get_info()
 
-        global_free, global_total = info
-        global_free /= (2**30) # GB
-        global_total /= (2**30) # GB
-        global_used = global_total - global_free
-        mem_ratio = round(global_used / global_total * 100)
-        if mem_ratio > 80:
-            processor.clear_non_permanent_memory()
-            torch.cuda.empty_cache()
+            global_free, global_total = info
+            global_free /= (2**30) # GB
+            global_total /= (2**30) # GB
+            global_used = global_total - global_free
+            #mem_ratio = round(global_used / global_total * 100)
+            mem_ratio = global_used / global_total
+            if mem_ratio > mem_cleanup_ratio:
+                print(f'GPU cleanup triggered: {mem_ratio} > {mem_cleanup_ratio}')
+                processor.clear_non_permanent_memory()
+                torch.cuda.empty_cache()
 
 
 def get_arguments():
@@ -220,6 +224,7 @@ def get_arguments():
     parser.add_argument('-d','--device', help='Target device for processing [cuda, cpu].', default='cuda')
     parser.add_argument('--mem_every', help='How often to update working memory; higher number speeds up processing.', type=int, default='10')
     parser.add_argument('--max_internal_size', help='maximum internal processing size; reducing this speeds up processing; -1 means no resizing.', type=int, default='480')
+    parser.add_argument('--mem_cleanup_ratio', help='How often to clear non permanent GPU memory; when ratio of GPU memory used is above given mem_cleanup_ratio [0;1] then cleanup is triggered; only used when device=cuda.', type=float, default='-1')
 
     args = parser.parse_args()
     return args
