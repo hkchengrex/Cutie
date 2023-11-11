@@ -65,6 +65,8 @@ If you are running this on a remote server, X11 forwarding is possible. Start by
 
 ![demo](https://i.imgur.com/nqlYqTq.jpg)
 
+(For single video evaluation, see `process_video.py` from https://github.com/hkchengrex/Cutie/pull/16)
+
 ## Training and Evaluation
 
 1. [Running Cutie on video object segmentation data.](docs/EVALUATION.md)
