@@ -16,6 +16,7 @@ log = logging.getLogger()
 
 
 class InferenceCore:
+
     def __init__(self,
                  network: CUTIE,
                  cfg: DictConfig,

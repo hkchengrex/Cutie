@@ -33,6 +33,7 @@ log = logging.getLogger()
 
 
 class MainController():
+
     def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
 
@@ -126,7 +127,7 @@ class MainController():
     def initialize_networks(self) -> None:
         download_models_if_needed()
         self.cutie = CUTIE(self.cfg).eval().to(self.device)
-        model_weights = torch.load(self.cfg.weights)
+        model_weights = torch.load(self.cfg.weights, map_location=self.device)
         self.cutie.load_weights(model_weights)
 
         self.click_ctrl = ClickController(self.cfg.ritm_weights, device=self.device)
@@ -149,7 +150,7 @@ class MainController():
         last_interaction = self.interaction
         new_interaction = None
 
-        with autocast(self.device, enabled=self.amp):
+        with autocast(self.device, enabled=(self.amp and self.device == 'cuda')):
             if action in ['left', 'right']:
                 # left: positive click
                 # right: negative click
@@ -289,7 +290,7 @@ class MainController():
 
     def on_propagate(self):
         # start to propagate
-        with autocast(self.device, enabled=self.amp):
+        with autocast(self.device, enabled=(self.amp and self.device == 'cuda')):
             self.convert_current_image_mask_torch()
 
             self.gui.text(f'Propagation started at t={self.curr_ti}.')
@@ -349,7 +350,7 @@ class MainController():
             self.complete_interaction()
             self.update_interacted_mask()
 
-        with autocast(self.device, enabled=self.amp):
+        with autocast(self.device, enabled=(self.amp and self.device == 'cuda')):
             self.convert_current_image_mask_torch()
             self.gui.text(f'Permanent memory saved at {self.curr_ti}.')
             self.curr_prob = self.processor.step(self.curr_image_torch,
@@ -457,22 +458,28 @@ class MainController():
     def update_gpu_gauges(self):
         if 'cuda' in self.device:
             info = torch.cuda.mem_get_info()
+            global_free, global_total = info
+            global_free /= (2**30)
+            global_total /= (2**30)
+            global_used = global_total - global_free
+
+            self.gui.gpu_mem_gauge.setFormat(f'{global_used:.1f} GB / {global_total:.1f} GB')
+            self.gui.gpu_mem_gauge.setValue(round(global_used / global_total * 100))
+
+            used_by_torch = torch.cuda.max_memory_allocated() / (2**30)
+            self.gui.torch_mem_gauge.setFormat(f'{used_by_torch:.1f} GB / {global_total:.1f} GB')
+            self.gui.torch_mem_gauge.setValue(round(used_by_torch / global_total * 100 / 1024))
         elif 'mps' in self.device:
-            info = (0, mps.current_allocated_memory()
-                    )  # NOTE: torch.mps does not support accessing free and total memory
+            mem_used = mps.current_allocated_memory() / (2**30)
+            self.gui.gpu_mem_gauge.setFormat(f'{mem_used:.1f} GB')
+            self.gui.gpu_mem_gauge.setValue(0)
+            self.gui.torch_mem_gauge.setFormat('N/A')
+            self.gui.torch_mem_gauge.setValue(0)
         else:
-            info = (0, 0)
-        global_free, global_total = info
-        global_free /= (2**30)
-        global_total /= (2**30)
-        global_used = global_total - global_free
-
-        self.gui.gpu_mem_gauge.setFormat(f'{global_used:.01f} GB / {global_total:.01f} GB')
-        self.gui.gpu_mem_gauge.setValue(round(global_used / global_total * 100))
-
-        used_by_torch = torch.cuda.max_memory_allocated() / (2**20)
-        self.gui.torch_mem_gauge.setFormat(f'{used_by_torch:.0f} MB / {global_total:.01f} GB')
-        self.gui.torch_mem_gauge.setValue(round(used_by_torch / global_total * 100 / 1024))
+            self.gui.gpu_mem_gauge.setFormat('N/A')
+            self.gui.gpu_mem_gauge.setValue(0)
+            self.gui.torch_mem_gauge.setFormat('N/A')
+            self.gui.torch_mem_gauge.setValue(0)
 
     def on_gpu_timer(self):
         self.update_gpu_gauges()
