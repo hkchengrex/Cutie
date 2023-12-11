@@ -62,7 +62,7 @@ Links to the datasets:
 We trained with four A100 GPUs, which took around 30 hours.
 
 ```
-OMP_NUM_THREADS=4 torchrun --master_port 25357 --nproc_per_node=4 train.py exp_id=[some unique id] model=[small/base] data=[base/with-mose/mega]
+OMP_NUM_THREADS=4 torchrun --master_port 25357 --nproc_per_node=4 cutie/train.py exp_id=[some unique id] model=[small/base] data=[base/with-mose/mega]
 ```
 
 - Change `nproc_per_node` to change the number of GPUs.
