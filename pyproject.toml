@@ -47,6 +47,8 @@ dependencies = [
   'pyqtdarktheme',
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["cutie"]
 
 [project.urls]
 "Homepage" = "https://github.com/hkchengrex/Cutie"
