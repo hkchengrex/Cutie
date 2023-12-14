@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling==1.18.0"]
+requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.metadata]
@@ -47,6 +47,8 @@ dependencies = [
   'pyqtdarktheme',
 ]
 
+[tool.hatch.build.targets.wheel]
+packages = ["cutie"]
 
 [project.urls]
 "Homepage" = "https://github.com/hkchengrex/Cutie"
