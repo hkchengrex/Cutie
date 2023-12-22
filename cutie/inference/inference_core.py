@@ -16,7 +16,6 @@ log = logging.getLogger()
 
 
 class InferenceCore:
-
     def __init__(self,
                  network: CUTIE,
                  cfg: DictConfig,
@@ -278,11 +277,11 @@ class InferenceCore:
                         this_mask = (mask == objects[mask_id]).type_as(pred_prob_no_bg)
                     else:
                         this_mask = mask[tmp_id]
-                    if tmp_id >= pred_prob_no_bg.shape[0]:
+                    if tmp_id > pred_prob_no_bg.shape[0]:
                         new_masks.append(this_mask.unsqueeze(0))
                     else:
                         # +1 for padding the background channel
-                        pred_prob_no_bg[tmp_id + 1] = this_mask
+                        pred_prob_no_bg[tmp_id - 1] = this_mask
                 # new_masks are always in the order of tmp_id
                 mask = torch.cat([pred_prob_no_bg, *new_masks], dim=0)
             elif idx_mask:
