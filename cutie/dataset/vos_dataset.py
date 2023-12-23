@@ -19,11 +19,13 @@ local_rank = int(os.environ['LOCAL_RANK'])
 
 class VOSMergeTrainDataset(Dataset):
     """
+    Note: data normalization happens within the model instead of here
+    
     For VOS data training
     data_configs is a Dict indexed by the name of the dataset, each containing:
     - im_root: path to the image directory
     - gt_root: path to the ground-truth directory
-    - max_skip: maximum number of allowed separation between consecutive frames
+    - max_skip: maximum number of allowed separations between consecutive frames
     - subset: a list of video names to use. If None, all videos are used.
     - empty_masks: a Dict[video_name, list of frames as string without extensions] 
                     that contain no objects. 
@@ -34,7 +36,7 @@ class VOSMergeTrainDataset(Dataset):
     - Pick num_frames frames
     - Pick max_num_obj objects
     - Apply some random transforms that are the same for all frames
-    - Apply random transform to each of the frame
+    - Apply random transform to each of the frames
     - The distance between frames is limited by max_skip
 
     With merge_probability, we sample another sequence and merge them as a single training sample 
