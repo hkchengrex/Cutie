@@ -18,6 +18,7 @@ local_rank = int(os.environ['LOCAL_RANK'])
 
 class SyntheticVideoDataset(Dataset):
     """
+    Note: data normalization happens within the model instead of here
     Generate pseudo VOS data by applying random transforms on static images.
 
     parameters is a list of tuples 
