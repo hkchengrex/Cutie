@@ -33,7 +33,6 @@ log = logging.getLogger()
 
 
 class MainController():
-
     def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
 
@@ -553,7 +552,7 @@ class MainController():
         self.update_memory_gauges()
 
     def on_import_mask(self):
-        file_name = self._open_file('Mask')
+        file_name = self.gui.open_file('Mask')
         if len(file_name) == 0:
             return
 
