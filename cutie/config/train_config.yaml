@@ -15,7 +15,6 @@ cudnn_benchmark: True
 weights: null
 checkpoint: null
 seed: 14159265
-acquire: True
 num_workers: 16
 
 log_text_interval: 100
