@@ -15,6 +15,7 @@ from gui.gui_utils import *
 
 
 class GUI(QWidget):
+
     def __init__(self, controller, cfg: DictConfig) -> None:
         super().__init__()
 
