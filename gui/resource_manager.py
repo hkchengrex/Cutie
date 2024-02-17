@@ -23,6 +23,7 @@ log = logging.getLogger()
 # https://bugs.python.org/issue28178
 # ah python ah why
 class LRU:
+
     def __init__(self, func, maxsize=128):
         self.cache = collections.OrderedDict()
         self.func = func
@@ -51,6 +52,7 @@ class SaveItem:
 
 
 class ResourceManager:
+
     def __init__(self, cfg: DictConfig):
         # determine inputs
         images = cfg['images']
@@ -152,9 +154,15 @@ class ResourceManager:
             elif args.type.startswith('visualization'):
                 # numpy array, save with cv2
                 vis_mode = args.type.split('_')[-1]
-                data = cv2.cvtColor(args.data, cv2.COLOR_RGB2BGR)
                 os.makedirs(path.join(self.visualization_dir, vis_mode), exist_ok=True)
-                cv2.imwrite(path.join(self.visualization_dir, vis_mode, args.name + '.jpg'), data)
+                if vis_mode == 'rgba':
+                    data = cv2.cvtColor(args.data, cv2.COLOR_RGBA2BGRA).copy()
+                    cv2.imwrite(path.join(self.visualization_dir, vis_mode, args.name + '.png'),
+                                data)
+                else:
+                    data = cv2.cvtColor(args.data, cv2.COLOR_RGB2BGR)
+                    cv2.imwrite(path.join(self.visualization_dir, vis_mode, args.name + '.jpg'),
+                                data)
             elif args.type == 'soft_mask':
                 # numpy array, save each channel with cv2
                 num_channels = args.data.shape[0]

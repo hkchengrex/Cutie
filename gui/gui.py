@@ -104,12 +104,17 @@ class GUI(QWidget):
         self.combo.addItem("light")
         self.combo.addItem("popup")
         self.combo.addItem("layer")
+        self.combo.addItem("rgba")
         self.combo.setCurrentText('davis')
         self.combo.currentTextChanged.connect(controller.set_vis_mode)
 
-        self.save_visualization_checkbox = QCheckBox(self)
-        self.save_visualization_checkbox.toggled.connect(controller.on_save_visualization_toggle)
-        self.save_visualization_checkbox.setChecked(False)
+        self.save_visualization_combo = QComboBox(self)
+        self.save_visualization_combo.addItem("None")
+        self.save_visualization_combo.addItem("Always")
+        self.save_visualization_combo.addItem("Propagation only (higher quality)")
+        self.combo.setCurrentText('None')
+        self.save_visualization_combo.currentTextChanged.connect(
+            controller.on_set_save_visualization_mode)
 
         self.save_soft_mask_checkbox = QCheckBox(self)
         self.save_soft_mask_checkbox.toggled.connect(controller.on_save_soft_mask_toggle)
@@ -230,7 +235,7 @@ class GUI(QWidget):
         overlay_topbox.addWidget(self.save_soft_mask_checkbox)
         overlay_topbox.addWidget(self.export_binary_button)
         overlay_botbox.addWidget(QLabel('Save visualization'))
-        overlay_botbox.addWidget(self.save_visualization_checkbox)
+        overlay_botbox.addWidget(self.save_visualization_combo)
         overlay_botbox.addWidget(self.export_video_button)
         overlay_botbox.addWidget(QLabel('Output FPS: '))
         overlay_botbox.addWidget(self.fps_dial)
@@ -327,6 +332,15 @@ class GUI(QWidget):
 
     def set_canvas(self, image):
         height, width, channel = image.shape
+        # if the image is RGBA, convert to RGB first by coloring the background green
+        if channel == 4:
+            image_rgb = image[:, :, :3].copy()
+            alpha = image[:, :, 3].astype(np.float32) / 255
+            green_bg = np.array([0, 255, 0])
+            # soft blending
+            image = (image_rgb * alpha[:, :, np.newaxis] + green_bg[np.newaxis, np.newaxis, :] *
+                     (1 - alpha[:, :, np.newaxis])).astype(np.uint8)
+
         bytesPerLine = 3 * width
 
         qImg = QImage(image.data, width, height, bytesPerLine, QImage.Format.Format_RGB888)

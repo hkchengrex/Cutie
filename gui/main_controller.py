@@ -86,7 +86,7 @@ class MainController():
         # visualization info
         self.vis_mode: str = 'davis'
         self.vis_image: np.ndarray = None
-        self.save_visualization: bool = False
+        self.save_visualization_mode: str = 'None'
         self.save_soft_mask: bool = False
 
         self.interacted_prob: torch.Tensor = None
@@ -219,7 +219,10 @@ class MainController():
                                                  self.vis_target_objects)
         self.curr_image_torch = None
         self.vis_image = np.ascontiguousarray(self.vis_image)
-        if self.save_visualization and not invalid_soft_mask:
+        save_visualization = self.save_visualization_mode in [
+            'Propagation only (higher quality)', 'Always'
+        ]
+        if save_visualization and not invalid_soft_mask:
             self.res_man.save_visualization(self.curr_ti, self.vis_mode, self.vis_image)
         if self.save_soft_mask and not invalid_soft_mask:
             self.res_man.save_soft_mask(self.curr_ti, self.curr_prob.cpu().numpy())
@@ -231,7 +234,7 @@ class MainController():
             self.update_current_image_fast(invalid_soft_mask)
         else:
             self.compose_current_im()
-            if self.save_visualization:
+            if self.save_visualization_mode == 'Always':
                 self.res_man.save_visualization(self.curr_ti, self.vis_mode, self.vis_image)
             self.update_canvas()
 
@@ -595,8 +598,8 @@ class MainController():
         except FileNotFoundError:
             self.gui.text(f'{file_name} not found.')
 
-    def on_save_visualization_toggle(self):
-        self.save_visualization = self.gui.save_visualization_checkbox.isChecked()
+    def on_set_save_visualization_mode(self):
+        self.save_visualization_mode = self.gui.save_visualization_combo.currentText()
 
     def on_save_soft_mask_toggle(self):
         self.save_soft_mask = self.gui.save_soft_mask_checkbox.isChecked()
