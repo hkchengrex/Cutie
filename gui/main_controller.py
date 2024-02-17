@@ -33,6 +33,7 @@ log = logging.getLogger()
 
 
 class MainController():
+
     def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
 
@@ -209,9 +210,10 @@ class MainController():
     def update_canvas(self):
         self.gui.set_canvas(self.vis_image)
 
-    def update_current_image_fast(self):
+    def update_current_image_fast(self, do_no_save_soft_mask: bool = False):
         # fast path, uses gpu. Changes the image in-place to avoid copying
         # thus current_image_torch must be voided afterwards
+        # do_no_save_soft_mask is an override to solve #41
         self.vis_image = get_visualization_torch(self.vis_mode, self.curr_image_torch,
                                                  self.curr_prob, self.overlay_layer_torch,
                                                  self.vis_target_objects)
@@ -219,14 +221,14 @@ class MainController():
         self.vis_image = np.ascontiguousarray(self.vis_image)
         if self.save_visualization:
             self.res_man.save_visualization(self.curr_ti, self.vis_mode, self.vis_image)
-        if self.save_soft_mask:
+        if self.save_soft_mask and not do_no_save_soft_mask:
             self.res_man.save_soft_mask(self.curr_ti, self.curr_prob.cpu().numpy())
         self.gui.set_canvas(self.vis_image)
 
-    def show_current_frame(self, fast: bool = False):
+    def show_current_frame(self, fast: bool = False, do_no_save_soft_mask: bool = False):
         # Re-compute overlay and show the image
         if fast:
-            self.update_current_image_fast()
+            self.update_current_image_fast(do_no_save_soft_mask)
         else:
             self.compose_current_im()
             if self.save_visualization:
@@ -301,7 +303,8 @@ class MainController():
             # clear
             self.interacted_prob = None
             self.reset_this_interaction()
-            self.show_current_frame(fast=True)
+            # override this for #41
+            self.show_current_frame(fast=True, do_no_save_soft_mask=True)
 
             self.propagating = True
             self.gui.clear_all_mem_button.setEnabled(False)
