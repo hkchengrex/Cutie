@@ -16,8 +16,10 @@ log = logging.getLogger()
 
 
 class CUTIE(nn.Module):
+
     def __init__(self, cfg: DictConfig, *, single_object=False):
         super().__init__()
+        self.cfg = cfg
         model_cfg = cfg.model
         self.ms_dims = model_cfg.pixel_encoder.ms_dims
         self.key_dim = model_cfg.key_dim
