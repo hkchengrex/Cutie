@@ -16,6 +16,7 @@ log = logging.getLogger()
 
 
 class InferenceCore:
+
     def __init__(self,
                  network: CUTIE,
                  cfg: DictConfig,
@@ -327,55 +328,9 @@ class InferenceCore:
 
         return output_prob
 
-    def get_aux_outputs(self, image: torch.Tensor) -> Dict[str, torch.Tensor]:
-        image, pads = pad_divide_by(image, 16)
-        image = image.unsqueeze(0)  # add the batch dimension
-        _, pix_feat = self.image_feature_store.get_features(self.curr_ti, image)
-
-        aux_inputs = self.memory.aux
-        aux_outputs = self.network.compute_aux(pix_feat, aux_inputs, selector=None)
-        aux_outputs['q_weights'] = aux_inputs['q_weights']
-        aux_outputs['p_weights'] = aux_inputs['p_weights']
-
-        for k, v in aux_outputs.items():
-            if len(v.shape) == 5:
-                aux_outputs[k] = F.interpolate(v[0],
-                                               size=image.shape[-2:],
-                                               mode='bilinear',
-                                               align_corners=False)
-            elif 'weights' in k:
-                b, num_objects, num_heads, num_queries, h, w = v.shape
-                v = v.view(num_objects * num_heads, num_queries, h, w)
-                v = F.interpolate(v, size=image.shape[-2:], mode='bilinear', align_corners=False)
-                aux_outputs[k] = v.view(num_objects, num_heads, num_queries, *image.shape[-2:])
-            else:
-                aux_outputs[k] = F.interpolate(v,
-                                               size=image.shape[-2:],
-                                               mode='bilinear',
-                                               align_corners=False)[0]
-            aux_outputs[k] = unpad(aux_outputs[k], pads)
-            if 'weights' in k:
-                weights = aux_outputs[k]
-                weights = weights / (weights.max(-1, keepdim=True)[0].max(-2, keepdim=True)[0] +
-                                     1e-8)
-                aux_outputs[k] = (weights * 255).cpu().numpy()
-            else:
-                aux_outputs[k] = (aux_outputs[k].softmax(dim=0) * 255).cpu().numpy()
-
-        self.image_feature_store.delete(self.curr_ti)
-        return aux_outputs
-
-    def get_aux_object_weights(self, image: torch.Tensor) -> np.ndarray:
-        image, pads = pad_divide_by(image, 16)
-        # B*num_objects*H*W*num_queries -> num_objects*num_queries*H*W
-        # weights = F.softmax(self.obj_logits, dim=-1)[0]
-        weights = F.sigmoid(self.obj_logits)[0]
-        weights = weights.permute(0, 3, 1, 2).contiguous()
-        weights = F.interpolate(weights,
-                                size=image.shape[-2:],
-                                mode='bilinear',
-                                align_corners=False)
-        # weights = weights / (weights.max(-1, keepdim=True)[0].max(-2, keepdim=True)[0])
-        weights = unpad(weights, pads)
-        weights = (weights * 255).cpu().numpy()
-        return weights
+    def delete_objects(self, objects: List[int]) -> None:
+        """
+        Delete the given objects from the memory.
+        """
+        self.object_manager.delete_objects(objects)
+        self.memory.purge_except(self.object_manager.all_obj_ids)

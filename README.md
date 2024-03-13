@@ -58,7 +58,7 @@ python scripts/download_models.py
 
 ### Scripting Demo
 
-(See also scripting_demo.py)
+This is probably the best starting point if you want to use Cutie in your project. Hopefully, the script is self-explanatory. If not, feel free to open an issue. Run `scripting_demo.py` to see it in action. For more advanced usage, like adding or removing objects, see `scripting_demo_add_del_objects.py`.
 
 ```python
 import os

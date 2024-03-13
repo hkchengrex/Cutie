@@ -10,6 +10,7 @@ class ObjectManager:
     Temporary IDs are the positions of each object in the tensor. It changes as objects get removed.
     Temporary IDs start from 1.
     """
+
     def __init__(self):
         self.obj_to_tmp_id: Dict[ObjectInfo, int] = {}
         self.tmp_id_to_obj: Dict[int, ObjectInfo] = {}
@@ -52,7 +53,7 @@ class ObjectManager:
         assert corresponding_tmp_ids == sorted(corresponding_tmp_ids)
         return corresponding_tmp_ids, corresponding_obj_ids
 
-    def delete_object(self, obj_ids_to_remove: Union[int, List[int]]) -> None:
+    def delete_objects(self, obj_ids_to_remove: Union[int, List[int]]) -> None:
         # delete an object or a list of objects
         # re-sort the tmp ids
         if isinstance(obj_ids_to_remove, int):
@@ -93,7 +94,7 @@ class ObjectManager:
 
         purge_activated = len(obj_id_to_be_deleted) > 0
         if purge_activated:
-            self.delete_object(obj_id_to_be_deleted)
+            self.delete_objects(obj_id_to_be_deleted)
         return purge_activated, tmp_id_to_keep, obj_id_to_keep
 
     def tmp_to_obj_cls(self, mask) -> torch.Tensor:
