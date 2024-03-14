@@ -334,3 +334,13 @@ class InferenceCore:
         """
         self.object_manager.delete_objects(objects)
         self.memory.purge_except(self.object_manager.all_obj_ids)
+
+    def output_prob_to_mask(self, output_prob: torch.Tensor) -> torch.Tensor:
+        mask = torch.argmax(output_prob, dim=0)
+
+        # index in tensor != object id -- remap the ids here
+        new_mask = torch.zeros_like(mask)
+        for tmp_id, obj in self.object_manager.tmp_id_to_obj.items():
+            new_mask[mask == tmp_id] = obj.id
+
+        return new_mask

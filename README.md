@@ -58,20 +58,9 @@ python scripts/download_models.py
 
 ### Scripting Demo
 
-This is probably the best starting point if you want to use Cutie in your project. Hopefully, the script is self-explanatory. If not, feel free to open an issue. Run `scripting_demo.py` to see it in action. For more advanced usage, like adding or removing objects, see `scripting_demo_add_del_objects.py`.
+This is probably the best starting point if you want to use Cutie in your project. Hopefully, the script is self-explanatory (additional comments in `scripting_demo.py`). If not, feel free to open an issue. For more advanced usage, like adding or removing objects, see `scripting_demo_add_del_objects.py`.
 
 ```python
-import os
-
-import torch
-from torchvision.transforms.functional import to_tensor
-from PIL import Image
-import numpy as np
-
-from cutie.inference.inference_core import InferenceCore
-from cutie.utils.get_default_model import get_default_model
-
-
 @torch.inference_mode()
 @torch.cuda.amp.autocast()
 def main():
@@ -92,15 +81,18 @@ def main():
         image = to_tensor(image).cuda().float()
 
         if ti == 0:
-            prediction = processor.step(image, mask, objects=objects)
+            output_prob = processor.step(image, mask, objects=objects)
         else:
-            prediction = processor.step(image)
+            output_prob = processor.step(image)
+
+        # convert output probabilities to an object mask
+        mask = processor.output_prob_to_mask(output_prob)
 
         # visualize prediction
-        prediction = torch.argmax(prediction, dim=0)
-        prediction = Image.fromarray(prediction.cpu().numpy().astype(np.uint8))
-        prediction.putpalette(palette)
-        prediction.show()  # or use prediction.save(...) to save it somewhere
+        mask = Image.fromarray(mask.cpu().numpy().astype(np.uint8))
+        mask.putpalette(palette)
+        mask.show()  # or use mask.save(...) to save it somewhere
+
 
 main()
 ```
