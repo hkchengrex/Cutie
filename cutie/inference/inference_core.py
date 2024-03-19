@@ -101,7 +101,7 @@ class InferenceCore:
             as_permanent = 'first'
 
         self.memory.initialize_sensory_if_needed(key, self.object_manager.all_obj_ids)
-        msk_value, sensory, obj_value, self.obj_logits = self.network.encode_mask(
+        msk_value, sensory, obj_value, _ = self.network.encode_mask(
             image,
             pix_feat,
             self.memory.get_sensory(self.object_manager.all_obj_ids),
@@ -220,7 +220,7 @@ class InferenceCore:
                     if idx_mask:
                         mask = F.interpolate(mask.unsqueeze(0).unsqueeze(0).float(),
                                              size=(new_h, new_w),
-                                             mode='nearest',
+                                             mode='nearest-exact',
                                              align_corners=False)[0, 0].round().long()
                     else:
                         mask = F.interpolate(mask.unsqueeze(0),
