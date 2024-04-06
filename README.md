@@ -1,6 +1,4 @@
-# Putting the Object Back into Video Object Segmentation
-
-![titlecard](https://imgur.com/6K7BgZ7.png)
+# [Putting the Object Back into Video Object Segmentation](https://hkchengrex.github.io/Cutie)
 
 [Ho Kei Cheng](https://hkchengrex.github.io/), [Seoung Wug Oh](https://sites.google.com/view/seoungwugoh/), [Brian Price](https://www.brianpricephd.com/), [Joon-Young Lee](https://joonyoung-cv.github.io/), [Alexander Schwing](https://www.alexander-schwing.de/)
 
