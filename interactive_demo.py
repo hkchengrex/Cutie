@@ -27,6 +27,8 @@ def get_arguments():
                         help='directory for storing buffered images (if needed) and output masks',
                         default=None)
     parser.add_argument('--num_objects', type=int, default=1)
+    parser.add_argument('--workspace_init_only', action='store_true',
+                        help='initialize the workspace and exit')
 
     args = parser.parse_args()
     return args
@@ -73,4 +75,7 @@ if __name__ in "__main__":
     app = QApplication(sys.argv)
     qdarktheme.setup_theme("auto")
     ex = MainController(cfg)
-    sys.exit(app.exec())
+    if 'workspace_init_only' in cfg and cfg['workspace_init_only']:
+        sys.exit(0)
+    else:
+        sys.exit(app.exec())

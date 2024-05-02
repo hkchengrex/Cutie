@@ -61,6 +61,8 @@ class MainController():
 
         # main components
         self.res_man = ResourceManager(cfg)
+        if 'workspace_init_only' in cfg and cfg['workspace_init_only']:
+            return
         self.processor = InferenceCore(self.cutie, self.cfg)
         self.gui = GUI(self, self.cfg)
 
