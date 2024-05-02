@@ -320,9 +320,33 @@ class GUI(QWidget):
             QShortcut(QKeySequence(f"Ctrl+{i}"),
                       self).activated.connect(functools.partial(controller.hit_number_key, i))
 
-        # <- and -> shortcuts
+        # next/prev frame shortcuts
         QShortcut(QKeySequence(Qt.Key.Key_Left), self).activated.connect(controller.on_prev_frame)
         QShortcut(QKeySequence(Qt.Key.Key_Right), self).activated.connect(controller.on_next_frame)
+
+        # +/- 10 frames shortcuts
+        QShortcut(QKeySequence(Qt.Key.Key_Left | Qt.KeyboardModifier.ShiftModifier),
+                    self).activated.connect(functools.partial(controller.on_prev_frame, 10))
+        QShortcut(QKeySequence(Qt.Key.Key_Right | Qt.KeyboardModifier.ShiftModifier),
+                    self).activated.connect(functools.partial(controller.on_next_frame, 10))
+        
+        # first/last frame shortcuts
+        QShortcut(QKeySequence(Qt.Key.Key_Left | Qt.KeyboardModifier.AltModifier),
+                    self).activated.connect(functools.partial(controller.on_prev_frame, 999999))
+        QShortcut(QKeySequence(Qt.Key.Key_Right | Qt.KeyboardModifier.AltModifier),
+                    self).activated.connect(functools.partial(controller.on_next_frame, 999999))
+        
+        # commit to permanent memory shortcut
+        QShortcut(QKeySequence(Qt.Key.Key_C), self).activated.connect(controller.on_commit)
+
+        # propagate forward/backward/pause shortcuts
+        QShortcut(QKeySequence(Qt.Key.Key_F), self).activated.connect(controller.on_forward_propagation)
+        QShortcut(QKeySequence(Qt.Key.Key_Space), self).activated.connect(controller.on_forward_propagation)
+        QShortcut(QKeySequence(Qt.Key.Key_B), self).activated.connect(controller.on_backward_propagation)
+
+        # quit shortcut
+        QShortcut(QKeySequence(Qt.Key.Key_Q), self).activated.connect(self.close)
+
 
     def resizeEvent(self, event):
         self.controller.show_current_frame()
