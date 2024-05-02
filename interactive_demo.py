@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 # fix for Windows
@@ -9,16 +10,6 @@ import signal
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 from argparse import ArgumentParser
-
-import torch
-from omegaconf import open_dict
-from hydra import compose, initialize
-import logging
-from PySide6.QtWidgets import QApplication
-import qdarktheme
-
-from gui.main_controller import MainController
-
 
 def get_arguments():
     parser = ArgumentParser()
@@ -42,14 +33,23 @@ def get_arguments():
 
 
 if __name__ in "__main__":
+    # input arguments
+    args = get_arguments()
+
+    # perform slow imports after parsing args
+    import torch
+    from omegaconf import open_dict
+    from hydra import compose, initialize
+    from PySide6.QtWidgets import QApplication
+    import qdarktheme
+    from gui.main_controller import MainController
+
+    # logging
     log = logging.getLogger()
 
     # getting hydra's config without using its decorator
     initialize(version_base='1.3.2', config_path="cutie/config", job_name="gui")
     cfg = compose(config_name="gui_config")
-
-    # input arguments
-    args = get_arguments()
 
     # general setup
     torch.set_grad_enabled(False)
