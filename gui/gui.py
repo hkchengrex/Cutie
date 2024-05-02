@@ -1,4 +1,5 @@
 import functools
+from pathlib import Path
 
 import numpy as np
 from omegaconf import DictConfig
@@ -194,7 +195,7 @@ class GUI(QWidget):
         self.tips.setReadOnly(True)
         self.tips.setTextInteractionFlags(Qt.NoTextInteraction)
         self.tips.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        with open('./gui/TIPS.md') as f:
+        with open(Path(__file__).parent / 'TIPS.md', 'r') as f:
             self.tips.setMarkdown(f.read())
 
         # navigator
