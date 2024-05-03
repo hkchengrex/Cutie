@@ -9,6 +9,9 @@ Controls:
 
 - Use left-click for foreground annotation and right-click for background annotation.
 - Use number keys or the spinbox to change the object to be operated on. If it does not respond, most likely the correct number of objects was not specified during program startup.
+- Use left/right arrows to move between frames, shift+arrow to move by 10 frames, and alt/option+arrow to move to the start/end.
+- Use F/space and B to propagate forward and backward, respectively.
+- Use C to commit a frame to permanent memory.
 - Memory can be corrupted by bad segmentations. Make good use of "reset memory" and do not commit bad segmentations.
 - "Export as video" only aggregates visualizations that are saved on disks. You need to check "save overlay" for that to happen.
 

@@ -18,6 +18,8 @@ We obtain the frames using the following rules:
 In any case, if a "masks" folder exists in the workspace, we will use that to initialize the mask.
 That way, you can continue annotation from an interrupted run as long as the same workspace is used.
 
+The command line argument `--workspace_init_only` can be used to initialize the workspace and then exit without loading the GUI, allowing the slow importing of images or videos to be performed offline.
+
 There are additional configurations that you can modify in `cutie/config/gui_config.yaml`. You cannot use command line for overriding those. The default should work most of the times.
 
 See [TIPS](../gui/TIPS.md) for some tips on using the tool.

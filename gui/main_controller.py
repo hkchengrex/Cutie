@@ -61,6 +61,8 @@ class MainController():
 
         # main components
         self.res_man = ResourceManager(cfg)
+        if 'workspace_init_only' in cfg and cfg['workspace_init_only']:
+            return
         self.processor = InferenceCore(self.cutie, self.cfg)
         self.gui = GUI(self, self.cfg)
 
@@ -452,12 +454,12 @@ class MainController():
         if self.interaction is not None:
             self.interaction = None
 
-    def on_prev_frame(self):
-        new_ti = max(0, self.curr_ti - 1)
+    def on_prev_frame(self, step=1):
+        new_ti = max(0, self.curr_ti - step)
         self.gui.tl_slider.setValue(new_ti)
 
-    def on_next_frame(self):
-        new_ti = min(self.curr_ti + 1, self.length - 1)
+    def on_next_frame(self, step=1):
+        new_ti = min(self.curr_ti + step, self.length - 1)
         self.gui.tl_slider.setValue(new_ti)
 
     def update_gpu_gauges(self):
