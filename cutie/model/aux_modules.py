@@ -71,7 +71,7 @@ class AuxComputer(nn.Module):
             # B*num_objects*H*W
             logits = self.sensory_aux(pix_feat, sensory)
             aux_output['sensory_logits'] = self._aggregate_with_selector(logits, selector)
-        if self.use_query_aux:
+        if self.use_query_aux and q_logits is not None:
             # B*num_objects*num_levels*H*W
             aux_output['q_logits'] = self._aggregate_with_selector(
                 torch.stack(q_logits, dim=2),

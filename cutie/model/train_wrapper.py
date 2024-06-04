@@ -61,7 +61,8 @@ class CutieTrainWrapper(CUTIE):
 
             # add the time dimension
             msk_values = msk_val.unsqueeze(3)  # B*num_objects*C*T*H*W
-            obj_values = obj_val.unsqueeze(2)  # B*num_objects*T*Q*C
+            obj_values = obj_val.unsqueeze(
+                2) if obj_val is not None else None  # B*num_objects*T*Q*C
 
             for ti in range(1, seq_length):
                 if ti <= self.num_ref_frames:
@@ -101,7 +102,8 @@ class CutieTrainWrapper(CUTIE):
                                                                     masks,
                                                                     deep_update=deep_update)
                     msk_values = torch.cat([msk_values, msk_val.unsqueeze(3)], 3)
-                    obj_values = torch.cat([obj_values, obj_val.unsqueeze(2)], 2)
+                    obj_values = torch.cat([obj_values, obj_val.unsqueeze(2)],
+                                           2) if obj_val is not None else None
 
                 out[f'masks_{ti}'] = masks
                 out[f'logits_{ti}'] = logits

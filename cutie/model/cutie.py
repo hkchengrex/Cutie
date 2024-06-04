@@ -16,7 +16,6 @@ log = logging.getLogger()
 
 
 class CUTIE(nn.Module):
-
     def __init__(self, cfg: DictConfig, *, single_object=False):
         super().__init__()
         self.cfg = cfg
@@ -28,8 +27,10 @@ class CUTIE(nn.Module):
         self.pixel_dim = model_cfg.pixel_dim
         self.embed_dim = model_cfg.embed_dim
         self.single_object = single_object
+        self.object_transformer_enabled = model_cfg.object_transformer.num_blocks > 0
 
         log.info(f'Single object: {self.single_object}')
+        log.info(f'Object transformer enabled: {self.object_transformer_enabled}')
 
         self.pixel_encoder = PixelEncoder(model_cfg)
         self.pix_feat_proj = nn.Conv2d(self.ms_dims[0], self.pixel_dim, kernel_size=1)
@@ -37,8 +38,9 @@ class CUTIE(nn.Module):
         self.mask_encoder = MaskEncoder(model_cfg, single_object=single_object)
         self.mask_decoder = MaskDecoder(model_cfg)
         self.pixel_fuser = PixelFeatureFuser(model_cfg, single_object=single_object)
-        self.object_transformer = QueryTransformer(model_cfg)
-        self.object_summarizer = ObjectSummarizer(model_cfg)
+        if self.object_transformer_enabled:
+            self.object_transformer = QueryTransformer(model_cfg)
+            self.object_summarizer = ObjectSummarizer(model_cfg)
         self.aux_computer = AuxComputer(cfg)
 
         self.register_buffer("pixel_mean", torch.Tensor(model_cfg.pixel_mean).view(-1, 1, 1), False)
@@ -80,7 +82,11 @@ class CUTIE(nn.Module):
                                                     others,
                                                     deep_update=deep_update,
                                                     chunk_size=chunk_size)
-        object_summaries, object_logits = self.object_summarizer(masks, mask_value, need_weights)
+        if self.object_transformer_enabled:
+            object_summaries, object_logits = self.object_summarizer(masks, mask_value,
+                                                                     need_weights)
+        else:
+            object_summaries, object_logits = None, None
         return mask_value, new_sensory, object_summaries, object_logits
 
     def transform_key(self,
@@ -156,6 +162,8 @@ class CUTIE(nn.Module):
                       *,
                       selector=None,
                       need_weights=False) -> (torch.Tensor, Dict[str, torch.Tensor]):
+        if not self.object_transformer_enabled:
+            return pixel_readout, None
         return self.object_transformer(pixel_readout,
                                        obj_memory,
                                        selector=selector,

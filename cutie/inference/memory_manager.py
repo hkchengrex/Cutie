@@ -95,6 +95,9 @@ class MemoryManager:
         return torch.stack([self.sensory[obj] for obj in obj_ids], dim=1)
 
     def _get_object_mem_by_ids(self, obj_ids: List[int]) -> torch.Tensor:
+        if obj_ids[0] not in self.obj_v:
+            # should only happen when the object transformer has been disabled
+            return None
         return torch.stack([self.obj_v[obj] for obj in obj_ids], dim=1)
 
     def _get_visual_values_by_ids(self, obj_ids: List[int]) -> torch.Tensor:
@@ -185,7 +188,8 @@ class MemoryManager:
                                                this_msk_value).view(bs, len(objects), self.CV, h, w)
                 pixel_readout = network.pixel_fusion(pix_feat, visual_readout, this_sensory,
                                                      this_last_mask)
-                this_obj_mem = self._get_object_mem_by_ids(objects).unsqueeze(2)
+                this_obj_mem = self._get_object_mem_by_ids(objects)
+                this_obj_mem = this_obj_mem.unsqueeze(2) if this_obj_mem is not None else None
                 readout_memory, aux_features = network.readout_query(pixel_readout, this_obj_mem)
                 for i, obj in enumerate(objects):
                     all_readout_mem[obj] = readout_memory[:, i]
@@ -219,7 +223,7 @@ class MemoryManager:
         bs = key.shape[0]
         assert shrinkage.shape[0] == bs
         assert msk_value.shape[0] == bs
-        assert obj_value.shape[0] == bs
+        assert obj_value is None or obj_value.shape[0] == bs
 
         self.engaged = True
         if self.H is None or self.config_stale:
@@ -245,25 +249,26 @@ class MemoryManager:
             selection = selection.flatten(start_dim=2)
 
         # insert object values into object memory
-        for obj_id, obj in enumerate(objects):
-            if obj in self.obj_v:
-                """streaming average
-                each self.obj_v[obj] is (1/2)*num_summaries*(embed_dim+1)
-                first embed_dim keeps track of the sum of embeddings
-                the last dim keeps the total count
-                averaging in done inside the object transformer
+        if obj_value is not None:
+            for obj_id, obj in enumerate(objects):
+                if obj in self.obj_v:
+                    """streaming average
+                    each self.obj_v[obj] is (1/2)*num_summaries*(embed_dim+1)
+                    first embed_dim keeps track of the sum of embeddings
+                    the last dim keeps the total count
+                    averaging in done inside the object transformer
 
-                incoming obj_value is (1/2)*num_objects*num_summaries*(embed_dim+1)
-                self.obj_v[obj] = torch.cat([self.obj_v[obj], obj_value[:, obj_id]], dim=0)
-                """
-                last_acc = self.obj_v[obj][:, :, -1]
-                new_acc = last_acc + obj_value[:, obj_id, :, -1]
+                    incoming obj_value is (1/2)*num_objects*num_summaries*(embed_dim+1)
+                    self.obj_v[obj] = torch.cat([self.obj_v[obj], obj_value[:, obj_id]], dim=0)
+                    """
+                    last_acc = self.obj_v[obj][:, :, -1]
+                    new_acc = last_acc + obj_value[:, obj_id, :, -1]
 
-                self.obj_v[obj][:, :, :-1] = (self.obj_v[obj][:, :, :-1] +
-                                              obj_value[:, obj_id, :, :-1])
-                self.obj_v[obj][:, :, -1] = new_acc
-            else:
-                self.obj_v[obj] = obj_value[:, obj_id]
+                    self.obj_v[obj][:, :, :-1] = (self.obj_v[obj][:, :, :-1] +
+                                                  obj_value[:, obj_id, :, :-1])
+                    self.obj_v[obj][:, :, -1] = new_acc
+                else:
+                    self.obj_v[obj] = obj_value[:, obj_id]
 
         # convert mask value tensor into a dict for insertion
         msk_values = {obj: msk_value[:, obj_id] for obj_id, obj in enumerate(objects)}
@@ -280,7 +285,7 @@ class MemoryManager:
                 if self.work_mem.non_perm_size(bucket_id) >= self.max_work_tokens:
                     # Remove obsolete features if needed
                     if self.long_mem.non_perm_size(bucket_id) >= (self.max_long_tokens -
-                                                         self.num_prototypes):
+                                                                  self.num_prototypes):
                         self.long_mem.remove_obsolete_features(
                             bucket_id,
                             self.max_long_tokens - self.num_prototypes - self.buffer_tokens)
@@ -368,7 +373,7 @@ class MemoryManager:
     def get_sensory(self, ids: List[int]):
         # returns (1/2)*num_objects*C*H*W
         return self._get_sensory_by_ids(ids)
-    
+
     def clear_non_permanent_memory(self):
         self.work_mem.clear_non_permanent_memory()
         if self.use_long_term:
