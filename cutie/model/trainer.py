@@ -41,7 +41,7 @@ class Trainer:
         self.log.log_string('model_size',
                             str(sum([param.nelement() for param in self.cutie.parameters()])))
         self.log.log_string(
-            'number_of_parameters_that_requires_gradient',
+            'number_of_parameters_that_require_gradient',
             str(
                 sum([
                     param.nelement()
