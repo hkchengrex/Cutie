@@ -220,8 +220,7 @@ class InferenceCore:
                     if idx_mask:
                         mask = F.interpolate(mask.unsqueeze(0).unsqueeze(0).float(),
                                              size=(new_h, new_w),
-                                             mode='nearest-exact',
-                                             align_corners=False)[0, 0].round().long()
+                                             mode='nearest-exact')[0, 0].round().long()
                     else:
                         mask = F.interpolate(mask.unsqueeze(0),
                                              size=(new_h, new_w),

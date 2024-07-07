@@ -16,6 +16,9 @@ def main():
     cutie = get_default_model()
     # Typically, use one InferenceCore per video
     processor = InferenceCore(cutie, cfg=cutie.cfg)
+    # the processor matches the shorter edge of the input to this size
+    # you might want to experiment with different sizes
+    processor.max_internal_size = 480
 
     image_path = './examples/images/bike'
     # ordering is important

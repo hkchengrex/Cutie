@@ -65,6 +65,9 @@ def main():
 
     cutie = get_default_model()
     processor = InferenceCore(cutie, cfg=cutie.cfg)
+    # the processor matches the shorter edge of the input to this size
+    # you might want to experiment with different sizes
+    processor.max_internal_size = 480
 
     image_path = './examples/images/bike'
     images = sorted(os.listdir(image_path))  # ordering is important
