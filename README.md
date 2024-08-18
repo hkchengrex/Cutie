@@ -49,7 +49,7 @@ pip install -e .
 **Download the pretrained models:**
 
 ```python
-python scripts/download_models.py
+python cutie/utils/download_models.py
 ```
 
 ## Quick Start
