@@ -27,7 +27,7 @@ from gui.gui import GUI
 from gui.click_controller import ClickController
 from gui.reader import PropagationReader, get_data_loader
 from gui.exporter import convert_frames_to_video, convert_mask_to_binary
-from scripts.download_models import download_models_if_needed
+from cutie.utils.download_models import download_models_if_needed
 
 log = logging.getLogger()
 
