@@ -10,7 +10,7 @@ _links = [
     ('https://github.com/hkchengrex/Cutie/releases/download/v1.0/cutie-base-mega.pth', 'a6071de6136982e396851903ab4c083a'),
 ]
 
-def download_models_if_needed(local: bool = False) -> str:
+def download_models_if_needed() -> str:
     weight_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'weights')
     os.makedirs(weight_dir, exist_ok=True)
     for link, md5 in _links:
@@ -33,4 +33,4 @@ def download_models_if_needed(local: bool = False) -> str:
             
 
 if __name__ == '__main__':
-    download_models_if_needed(local=True)
+    download_models_if_needed()
