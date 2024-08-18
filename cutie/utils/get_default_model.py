@@ -15,9 +15,9 @@ def get_default_model() -> CUTIE:
     initialize(version_base='1.3.2', config_path="../config", job_name="eval_config")
     cfg = compose(config_name="eval_config")
 
-    download_models_if_needed()
+    weight_dir = download_models_if_needed()
     with open_dict(cfg):
-        cfg['weights'] = os.path.join(torch.hub.get_dir(), 'weights', 'cutie-base-mega.pth')
+        cfg['weights'] = os.path.join(weight_dir, 'cutie-base-mega.pth')
     get_dataset_cfg(cfg)
 
     # Load the network weights
