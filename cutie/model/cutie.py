@@ -240,7 +240,8 @@ class CUTIE(nn.Module):
             This is not supposed to happen in standard training except when users are trying to
             finetune a trained model with single object datasets.
             """
-            if src_dict['mask_encoder.conv1.weight'].shape[1] == 5:
+            k = 'mask_encoder.conv1.weight'
+            if src_dict[k].shape[1] == 5:
                 log.warning(f'Converting {k} from multiple objects to single object.'
                             'This is not supposed to happen in standard training.')
                 src_dict[k] = src_dict[k][:, :-1]
