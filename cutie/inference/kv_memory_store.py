@@ -8,7 +8,10 @@ def _add_last_dim(dictionary, key, new_value, prepend=False):
     # if the key does not exist, put the new value in
     # append by default
     if key in dictionary:
-        dictionary[key] = torch.cat([dictionary[key], new_value], -1)
+        if prepend:
+            dictionary[key] = torch.cat([new_value, dictionary[key]], -1)
+        else:
+            dictionary[key] = torch.cat([dictionary[key], new_value], -1)
     else:
         dictionary[key] = new_value
 
@@ -18,6 +21,7 @@ class KeyValueMemoryStore:
     Works for key/value pairs type storage
     e.g., working and long-term memory
     """
+
     def __init__(self, save_selection: bool = False, save_usage: bool = False):
         """
         We store keys and values of objects that first appear in the same frame in a bucket.
