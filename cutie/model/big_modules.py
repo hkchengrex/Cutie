@@ -23,11 +23,12 @@ class PixelEncoder(nn.Module):
         super().__init__()
 
         self.is_resnet = 'resnet' in model_cfg.pixel_encoder.type
+        resnet_model_path = model_cfg.get('resnet_model_path')
         if self.is_resnet:
             if model_cfg.pixel_encoder.type == 'resnet18':
-                network = resnet.resnet18(pretrained=True)
+                network = resnet.resnet18(pretrained=True, model_dir=resnet_model_path)
             elif model_cfg.pixel_encoder.type == 'resnet50':
-                network = resnet.resnet50(pretrained=True)
+                network = resnet.resnet50(pretrained=True, model_dir=resnet_model_path)
             else:
                 raise NotImplementedError
             self.conv1 = network.conv1
@@ -97,10 +98,11 @@ class MaskEncoder(nn.Module):
         self.single_object = single_object
         extra_dim = 1 if single_object else 2
 
+        resnet_model_path = model_cfg.get('resnet_model_path')
         if model_cfg.mask_encoder.type == 'resnet18':
-            network = resnet.resnet18(pretrained=True, extra_dim=extra_dim)
+            network = resnet.resnet18(pretrained=True, extra_dim=extra_dim, model_dir=resnet_model_path)
         elif model_cfg.mask_encoder.type == 'resnet50':
-            network = resnet.resnet50(pretrained=True, extra_dim=extra_dim)
+            network = resnet.resnet50(pretrained=True, extra_dim=extra_dim, model_dir=resnet_model_path)
         else:
             raise NotImplementedError
         self.conv1 = network.conv1
